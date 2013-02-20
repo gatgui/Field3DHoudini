@@ -23,9 +23,9 @@ if hfs:
 if not srcdir or not os.path.isdir(srcdir):
   raise Exception("Could not figure out Houdini field3d DSO sources location")
 for f in glob.glob(srcdir+"/*.C"):
-  shutil.copy2(f, os.path.basename(f))
+  shutil.copyfile(f, os.path.basename(f))
 for f in glob.glob(srcdir+"/*.h"):
-  shutil.copy2(f, os.path.basename(f))
+  shutil.copyfile(f, os.path.basename(f))
 if not os.path.isfile(src):
   raise Exception("Source file \"%s\" doesn't exist" % src)
 else:
@@ -98,6 +98,10 @@ if OpenMPI_inc:
 libdirs = [Field3D_lib]
 if OpenMPI_lib:
   libdirs.append(OpenMPI_lib)
+libs = ["Field3D"]
+if sys.platform == "darwin":
+  # On OSX, still need to link those libs on top of Field3D...
+  libs.extend(["hdf5", "Half", "tbb"])
 
 targets = [
   {"name"    : "houdini%s/dso/f3dtools" % ARGUMENTS.get("houdini-ver"),
@@ -107,7 +111,7 @@ targets = [
    "srcs"    : [src],
    "incdirs" : incdirs,
    "libdirs" : libdirs,
-   "libs"    : ["Field3D"],
+   "libs"    : libs,
    "custom"  : [houdini.Require, houdini.Plugin]}
 ]
 
