@@ -107,7 +107,7 @@ targets = [
    "srcs"    : [src],
    "incdirs" : incdirs,
    "libdirs" : libdirs,
-   "libs"    : ["hdf5", "IlmThread", "Iex", "Imath", "Half", "Field3D"],
+   "libs"    : ["Field3D"],
    "custom"  : [houdini.Require, houdini.Plugin]}
 ]
 
