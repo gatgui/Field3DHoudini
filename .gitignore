@@ -1,0 +1,6 @@
+.build
+release
+debug
+*.dblite
+*.C
+*.h
