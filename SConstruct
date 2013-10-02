@@ -46,15 +46,38 @@ else:
     shutil.move(src+".tmp", src)
 
 # Field3D setup
-if not ARGUMENTS.get("with-field3d", None):
-  Field3D_build = True
-  Field3D_prefix = os.path.abspath("./Field3D/install/%s/%s/release" % (sys.platform, "m64" if excons.Build64() else "m32"))
-  Field3D_inc = "%s/include" % Field3D_prefix
-  Field3D_lib = "%s/lib" % Field3D_prefix
+Field3D_build = False
+Field3D_hou_inc = None
+Field3D_hou_lib = None
+
+_, hfs = houdini.GetVersionAndDirectory(noexc=True)
+if hfs:
+  if sys.platform == "win32":
+    Field3D_hou_inc = "%s/toolkit/include" % hfs
+    Field3D_hou_lib = "%s/custom/houdini/dsolib" % hfs
+  elif sys.platform == "darwin":
+    Field3D_hou_inc = "%s/Resources/toolkit/include" % hfs
+    Field3D_hou_lib = "%s/Libraries" % hfs
+  else:
+    Field3D_hou_inc = "%s/toolkit/include" % hfs
+    Field3D_hou_lib = "%s/dsolib" % hfs
+
+Field3D_inc, Field3D_lib = excons.GetDirs("field3d", nostd=True, noexc=True)
+
+if not Field3D_inc or not Field3D_lib:
+  # with-field3d* flags not provided or invalid directories
+  # -> Use houdini provided Field3D if with-field3d flags is set to "houdini"
+  f3d = ARGUMENTS.get("with-field3d", None)
+  if f3d and f3d == "houdini":
+    Field3D_inc = Field3D_hou_inc
+    Field3D_lib = Field3D_hou_lib
+  else:
+    Field3D_build = True
+    Field3D_prefix = os.path.abspath("./Field3D/install/%s/%s/release" % (sys.platform, "m64" if excons.Build64() else "m32"))
+    Field3D_inc = "%s/include" % Field3D_prefix
+    Field3D_lib = "%s/lib" % Field3D_prefix
   ARGUMENTS["with-field3d-inc"] = Field3D_inc
   ARGUMENTS["with-field3d-lib"] = Field3D_lib
-else:
-  Field3D_inc, Field3D_lib = excons.GetDirs("field3d")
 
 # OpenMPI setup
 OpenMPI_inc, OpenMPI_lib = None, None
