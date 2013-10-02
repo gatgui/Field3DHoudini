@@ -124,7 +124,7 @@ if OpenMPI_lib:
 libs = ["Field3D"]
 if sys.platform == "darwin":
   # On OSX, still need to link those libs on top of Field3D...
-  libs.extend(["hdf5", "Half", "tbb"])
+  libs.extend(["hdf5", "Half", "tbb", "boost_thread", "boost_system"])
 
 targets = [
   {"name"    : "houdini%s/dso/f3dtools" % ARGUMENTS.get("houdini-ver"),
