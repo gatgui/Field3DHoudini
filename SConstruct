@@ -34,7 +34,7 @@ Field3D_static = False
 
 Field3D_inc, Field3D_lib = excons.GetDirs("field3d", noexc=True)
 
-if not Field3D_inc or not Field3D_lib:
+if not Field3D_inc and not Field3D_lib:
   f3d = excons.GetArgument("with-field3d", None)
   
   if not f3d or f3d == "houdini":
