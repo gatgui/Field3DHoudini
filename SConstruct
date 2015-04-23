@@ -60,8 +60,8 @@ if not Field3D_inc or not Field3D_lib:
 
 # Build Field3D if needed
 if Field3D_build:
-  field3d_static = (excons.GetArgument("field3d-static", 0, int) != 0)
-  excons.SetArgument("static", "1" if field3d_static else "0")
+  Field3D_static = (excons.GetArgument("field3d-static", 0, int) != 0)
+  excons.SetArgument("static", "1" if Field3D_static else "0")
   SConscript("Field3D/SConstruct")
 
 # Build houdini DSO
