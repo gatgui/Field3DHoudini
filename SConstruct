@@ -29,15 +29,13 @@ if not os.path.isfile(src):
   sys.exit(1)
 
 # Field3D setup
-Field3D_build = False
 Field3D_static = False
-
 Field3D_inc, Field3D_lib = excons.GetDirs("field3d", noexc=True)
 
 if not Field3D_inc and not Field3D_lib:
   f3d = excons.GetArgument("with-field3d", None)
   
-  if not f3d or f3d == "houdini":
+  if f3d == "houdini":
     # Use version provided with houdini
     if sys.platform == "win32":
       Field3D_inc = "%s/toolkit/include" % hfs
@@ -52,21 +50,18 @@ if not Field3D_inc and not Field3D_lib:
       Field3D_lib = "%s/dsolib" % hfs
   
   else:
-    # Build our own (don't forget then to set field3d build flags for boost/ilmbase/hdf5)
-    Field3D_build = True
-    Field3D_prefix = os.path.abspath("./Field3D/%s/%s" % (excons.mode_dir, excons.arch_dir))
-    Field3D_inc = "%s/include" % Field3D_prefix
-    Field3D_lib = "%s/lib" % Field3D_prefix
-
-# Build Field3D if needed
-if Field3D_build:
-  Field3D_static = (excons.GetArgument("field3d-static", 0, int) != 0)
-  excons.SetArgument("static", "1" if Field3D_static else "0")
-  SConscript("Field3D/SConstruct")
+    # Build Field3D as a static lib (don't forget then to set field3d build flags for boost/ilmbase/hdf5)
+    Field3D_static = True
+    excons.SetArgument("field3d-static", 1)
+    SConscript("Field3D/SConstruct")
 
 # Build houdini DSO
-incdirs = [Field3D_inc]
-libdirs = [Field3D_lib]
+incdirs = []
+libdirs = []
+if Field3D_inc:
+  incdirs.append(Field3D_inc)
+if Field3D_lib:
+  libdirs.append(Field3D_lib)
 libs = ["Field3D"]
 defs = []
 if Field3D_static:
